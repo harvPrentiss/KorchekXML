@@ -1,0 +1,9 @@
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\obj\Debug\KorchekXML.csprojAssemblyReference.cache
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\obj\Debug\KorchekXML.Form1.resources
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\obj\Debug\KorchekXML.Properties.Resources.resources
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\obj\Debug\KorchekXML.csproj.GenerateResource.cache
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\bin\Debug\KorchekXML.exe.config
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\bin\Debug\KorchekXML.exe
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\bin\Debug\KorchekXML.pdb
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\obj\Debug\KorchekXML.exe
+C:\Users\Harvicus\source\repos\KorchekXML\KorchekXML\obj\Debug\KorchekXML.pdb
