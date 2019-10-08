@@ -19,6 +19,8 @@ namespace KorchekXML
 
         private bool dataChanged;
 
+        private bool dataError;
+
         public Form1()
         {
             InitializeComponent();
@@ -36,6 +38,7 @@ namespace KorchekXML
             };
 
             dataChanged = false;
+            dataError = false;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -71,7 +74,7 @@ namespace KorchekXML
                     try
                     {
                         xmlDataSet.ReadXml(openFileDialog1.FileName);
-                        dataGridView1.DataSource = xmlDataSet.Tables[1];
+                        dataGridView1.DataSource = xmlDataSet.Tables["ExampleObject"];
                         label1.ForeColor = Color.Green;
                         label1.Text = "File loaded successfully.";
                         button2.Visible = true;
@@ -95,40 +98,52 @@ namespace KorchekXML
 
         private void button2_Click(object sender, EventArgs e)
         {
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {               
-                try
+            if(!dataError)
+            {
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    DataTable dtSource = new DataTable();
-                    dtSource.TableName = "SavingTable";
-
-                    foreach (DataGridViewColumn col in dataGridView1.Columns)
-                    {                        
-                        if (col.Name == string.Empty) continue;
-                        dtSource.Columns.Add(col.Name, col.ValueType);
-                        dtSource.Columns[col.Name].Caption = col.HeaderText;
-                    }
-                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    XmlWriter xWriter = XmlWriter.Create(saveFileDialog1.FileName);
+                    try
                     {
-                        DataRow drNewRow = dtSource.NewRow();
-                        foreach (DataColumn col in dtSource.Columns)
-                        {
-                            drNewRow[col.ColumnName] = row.Cells[col.ColumnName].Value;
-                        }
-                        dtSource.Rows.Add(drNewRow);
-                    }
+                        
 
-                    dtSource.WriteXml(saveFileDialog1.FileName);
-                    label1.ForeColor = Color.Green;
-                    label1.Text = "File saved successfully";
-                }
-                catch(Exception ex)
-                {
-                    label1.ForeColor = Color.Red;
-                    label1.Text = "There was an error saving the XML file.";
+                        xWriter.WriteStartDocument();
+                        xWriter.WriteStartElement("Objects");
+
+                        foreach(DataGridViewRow row in dataGridView1.Rows)
+                        {
+                            if (row.Cells[0].Value == null) continue;
+                            xWriter.WriteStartElement("ExampleObject");
+                            for(int i = 0; i < row.Cells.Count; i++)
+                            {
+                                string col = dataGridView1.Columns[i].Name;
+                                string cellVal = row.Cells[i].Value.ToString();
+                                xWriter.WriteAttributeString(col, cellVal);
+                            }
+                            xWriter.WriteEndElement();
+                        }
+
+                        xWriter.WriteEndElement();
+                        xWriter.WriteEndDocument();
+
+                        label1.ForeColor = Color.Green;
+                        label1.Text = "File saved successfully";
+                        xWriter.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        label1.ForeColor = Color.Red;
+                        label1.Text = "There was an error saving the XML file.";
+                        xWriter.Close();
+                    }
                 }
             }
+            else
+            {
+                label1.ForeColor = Color.Red;
+                label1.Text = "Cannot save until errors are corrected.";
+            }
+            
         }
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -140,6 +155,9 @@ namespace KorchekXML
         {
             string colText = dataGridView1.Columns[e.ColumnIndex].HeaderText;
 
+            bool DOBError = false;
+            bool widgetError = false;
+
             if(colText == "DOB")
             {
                 DateTime temp;
@@ -149,6 +167,7 @@ namespace KorchekXML
                     e.Cancel = true;
                     label1.ForeColor = Color.Red;
                     label1.Text = "The string entered is not a valid date.";
+                   DOBError = true;
                 }
             }
             if(colText == "NumberOfWidgets")
@@ -160,7 +179,17 @@ namespace KorchekXML
                     e.Cancel = true;
                     label1.ForeColor = Color.Red;
                     label1.Text = "Content must be numeric";
+                    widgetError = true;
                 }
+            }
+
+            if(widgetError || DOBError)
+            {
+                dataError = true;
+            }
+            else
+            {
+                dataError = false;
             }
         }
 
